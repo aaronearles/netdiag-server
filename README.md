@@ -23,10 +23,10 @@ A lightweight, Dockerized web service that provides whois lookups via HTTP API a
 cd whois-http
 
 # Build and start the service
-docker-compose up -d --build
+docker compose up -d --build
 
 # Check the logs
-docker-compose logs -f
+docker compose logs -f
 
 # Verify it's running
 curl http://localhost:3000/health
@@ -154,7 +154,7 @@ Features:
 
 ## Configuration
 
-Configure the service using environment variables in `docker-compose.yml`:
+Configure the service using environment variables in `docker compose.yml`:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -181,7 +181,7 @@ environment:
 ```
 whois-http/
 ├── Dockerfile
-├── docker-compose.yml
+├── docker compose.yml
 ├── .dockerignore
 ├── package.json
 ├── server.js                 # Main Express application
@@ -244,10 +244,10 @@ ssh user@dockerint01
 cd ~/whois-http
 
 # Build and start
-docker-compose up -d --build
+docker compose up -d --build
 
 # Verify
-docker-compose ps
+docker compose ps
 curl http://localhost:3000/health
 ```
 
@@ -266,32 +266,32 @@ open http://dockerint01:3000/
 ### Check Container Status
 
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
 ### View Logs
 
 ```bash
 # All logs
-docker-compose logs
+docker compose logs
 
 # Follow logs
-docker-compose logs -f
+docker compose logs -f
 
 # Last 100 lines
-docker-compose logs --tail=100
+docker compose logs --tail=100
 ```
 
 ### Restart Service
 
 ```bash
-docker-compose restart
+docker compose restart
 ```
 
 ### Rebuild After Changes
 
 ```bash
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 ### Test Whois Command
@@ -308,7 +308,7 @@ whois 8.8.8.8
 
 **Port already in use:**
 ```bash
-# Change PORT in docker-compose.yml
+# Change PORT in docker compose.yml
 ports:
   - "8080:3000"
 ```
@@ -323,7 +323,7 @@ environment:
 **Whois command not found:**
 ```bash
 # Rebuild image to ensure whois package is installed
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 ## Testing

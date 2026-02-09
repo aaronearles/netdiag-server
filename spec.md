@@ -340,8 +340,6 @@ CMD ["node", "server.js"]
 ### 13. docker-compose.yml
 
 ```yaml
-version: '3.8'
-
 services:
   whois-service:
     build: .
@@ -464,13 +462,13 @@ Documentation including:
 3. **Build and run:**
    ```bash
    cd ~/whois-service
-   docker-compose up -d --build
+   docker compose up -d --build
    ```
 
 4. **Verify:**
    ```bash
-   docker-compose ps
-   docker-compose logs -f
+   docker compose ps
+   docker compose logs -f
    curl http://localhost:3000/health
    ```
 
