@@ -48,6 +48,22 @@ const clearHistoryBtn = document.getElementById('clear-history-btn');
 const RECENT_QUERIES_KEY = 'nettools-recent-queries';
 const MAX_RECENT = 10;
 
+// Dark mode
+const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+function toggleDarkMode() {
+    const html = document.documentElement;
+    const isDark = html.classList.contains('dark');
+
+    if (isDark) {
+        html.classList.remove('dark');
+        localStorage.setItem('darkMode', 'false');
+    } else {
+        html.classList.add('dark');
+        localStorage.setItem('darkMode', 'true');
+    }
+}
+
 // Tool switching
 function switchTool(tool) {
     currentTool = tool;
@@ -189,15 +205,15 @@ function displayParsedData(data, tool) {
 
 function renderTable(data) {
     const table = document.createElement('table');
-    table.className = 'min-w-full divide-y divide-gray-200';
+    table.className = 'min-w-full divide-y divide-gray-200 dark:divide-gray-700';
     const tbody = document.createElement('tbody');
-    tbody.className = 'bg-white divide-y divide-gray-200';
+    tbody.className = 'bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700';
 
     for (const [key, value] of Object.entries(data)) {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td class="px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">${escapeHtml(key)}</td>
-            <td class="px-4 py-3 text-sm text-gray-700">${escapeHtml(value)}</td>
+            <td class="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-200 whitespace-nowrap">${escapeHtml(key)}</td>
+            <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">${escapeHtml(value)}</td>
         `;
         tbody.appendChild(row);
     }
@@ -212,14 +228,14 @@ function renderDnsData(data) {
 
     if (data.records && data.records.length > 0) {
         const recordsDiv = document.createElement('div');
-        recordsDiv.innerHTML = `<h4 class="font-semibold text-gray-800 mb-2">DNS Records (${data.record_count})</h4>`;
+        recordsDiv.innerHTML = `<h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">DNS Records (${data.record_count})</h4>`;
 
         const recordList = document.createElement('ul');
-        recordList.className = 'bg-gray-50 rounded p-4 space-y-1';
+        recordList.className = 'bg-gray-50 dark:bg-gray-900 rounded p-4 space-y-1';
 
         data.records.forEach(record => {
             const li = document.createElement('li');
-            li.className = 'text-sm text-gray-700 font-mono';
+            li.className = 'text-sm text-gray-700 dark:text-gray-300 font-mono';
             li.textContent = record;
             recordList.appendChild(li);
         });
@@ -227,7 +243,7 @@ function renderDnsData(data) {
         recordsDiv.appendChild(recordList);
         container.appendChild(recordsDiv);
     } else {
-        container.innerHTML = '<p class="text-gray-500">No records found</p>';
+        container.innerHTML = '<p class="text-gray-500 dark:text-gray-400">No records found</p>';
     }
 
     parsedData.appendChild(container);
@@ -239,30 +255,30 @@ function renderPingData(data) {
 
     // Summary
     const summary = document.createElement('div');
-    summary.className = 'bg-gray-50 rounded p-4';
+    summary.className = 'bg-gray-50 dark:bg-gray-900 rounded p-4';
 
     const successRate = 100 - (data.packet_loss_percent || 0);
-    const statusColor = successRate === 100 ? 'text-green-600' :
-                       successRate >= 75 ? 'text-yellow-600' : 'text-red-600';
+    const statusColor = successRate === 100 ? 'text-green-600 dark:text-green-400' :
+                       successRate >= 75 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400';
 
     summary.innerHTML = `
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
-                <div class="text-gray-600">Target</div>
-                <div class="font-semibold text-gray-800">${escapeHtml(data.target)}</div>
+                <div class="text-gray-600 dark:text-gray-400">Target</div>
+                <div class="font-semibold text-gray-800 dark:text-gray-200">${escapeHtml(data.target)}</div>
             </div>
             <div>
-                <div class="text-gray-600">Packets</div>
-                <div class="font-semibold text-gray-800">${data.packets_sent} sent, ${data.packets_received} received</div>
+                <div class="text-gray-600 dark:text-gray-400">Packets</div>
+                <div class="font-semibold text-gray-800 dark:text-gray-200">${data.packets_sent} sent, ${data.packets_received} received</div>
             </div>
             <div>
-                <div class="text-gray-600">Loss</div>
+                <div class="text-gray-600 dark:text-gray-400">Loss</div>
                 <div class="font-semibold ${statusColor}">${data.packet_loss_percent}%</div>
             </div>
             ${data.rtt ? `
             <div>
-                <div class="text-gray-600">Avg RTT</div>
-                <div class="font-semibold text-gray-800">${data.rtt.avg_ms} ms</div>
+                <div class="text-gray-600 dark:text-gray-400">Avg RTT</div>
+                <div class="font-semibold text-gray-800 dark:text-gray-200">${data.rtt.avg_ms} ms</div>
             </div>
             ` : ''}
         </div>
@@ -273,23 +289,23 @@ function renderPingData(data) {
     if (data.rtt) {
         const rttDiv = document.createElement('div');
         rttDiv.innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Round-Trip Time</h4>
-            <div class="bg-gray-50 rounded p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">Round-Trip Time</h4>
+            <div class="bg-gray-50 dark:bg-gray-900 rounded p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
-                    <div class="text-gray-600">Min</div>
-                    <div class="font-mono text-gray-800">${data.rtt.min_ms} ms</div>
+                    <div class="text-gray-600 dark:text-gray-400">Min</div>
+                    <div class="font-mono text-gray-800 dark:text-gray-200">${data.rtt.min_ms} ms</div>
                 </div>
                 <div>
-                    <div class="text-gray-600">Avg</div>
-                    <div class="font-mono text-gray-800">${data.rtt.avg_ms} ms</div>
+                    <div class="text-gray-600 dark:text-gray-400">Avg</div>
+                    <div class="font-mono text-gray-800 dark:text-gray-200">${data.rtt.avg_ms} ms</div>
                 </div>
                 <div>
-                    <div class="text-gray-600">Max</div>
-                    <div class="font-mono text-gray-800">${data.rtt.max_ms} ms</div>
+                    <div class="text-gray-600 dark:text-gray-400">Max</div>
+                    <div class="font-mono text-gray-800 dark:text-gray-200">${data.rtt.max_ms} ms</div>
                 </div>
                 <div>
-                    <div class="text-gray-600">StdDev</div>
-                    <div class="font-mono text-gray-800">${data.rtt.stddev_ms} ms</div>
+                    <div class="text-gray-600 dark:text-gray-400">StdDev</div>
+                    <div class="font-mono text-gray-800 dark:text-gray-200">${data.rtt.stddev_ms} ms</div>
                 </div>
             </div>
         `;
@@ -301,16 +317,16 @@ function renderPingData(data) {
 
 function renderPortData(data) {
     const container = document.createElement('div');
-    container.className = 'bg-gray-50 rounded p-6 text-center';
+    container.className = 'bg-gray-50 dark:bg-gray-900 rounded p-6 text-center';
 
-    const statusColor = data.open ? 'text-green-600' : 'text-red-600';
+    const statusColor = data.open ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
     const statusIcon = data.open ? '✓' : '✗';
     const statusText = data.open ? 'OPEN' : 'CLOSED';
 
     container.innerHTML = `
         <div class="text-4xl mb-2 ${statusColor}">${statusIcon}</div>
         <div class="text-xl font-bold ${statusColor} mb-4">Port ${statusText}</div>
-        <div class="space-y-2 text-sm text-gray-700">
+        <div class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
             <div><span class="font-medium">Host:</span> ${escapeHtml(data.host)}</div>
             <div><span class="font-medium">Port:</span> ${data.port}</div>
             ${data.resolved_ip ? `<div><span class="font-medium">Resolved IP:</span> ${escapeHtml(data.resolved_ip)}</div>` : ''}
@@ -329,28 +345,28 @@ function renderSslData(data) {
 
     // Validity status
     const validityDiv = document.createElement('div');
-    validityDiv.className = 'bg-gray-50 rounded p-4';
+    validityDiv.className = 'bg-gray-50 dark:bg-gray-900 rounded p-4';
 
-    const validColor = cert.validity.valid ? 'text-green-600' : 'text-red-600';
+    const validColor = cert.validity.valid ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
     const validIcon = cert.validity.valid ? '✓' : '✗';
 
     validityDiv.innerHTML = `
         <div class="flex items-center justify-between mb-4">
-            <h4 class="font-semibold text-gray-800">Certificate Status</h4>
+            <h4 class="font-semibold text-gray-800 dark:text-gray-200">Certificate Status</h4>
             <span class="text-2xl ${validColor}">${validIcon}</span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div>
-                <div class="text-gray-600">Valid</div>
+                <div class="text-gray-600 dark:text-gray-400">Valid</div>
                 <div class="font-semibold ${validColor}">${cert.validity.valid ? 'Yes' : 'No'}</div>
             </div>
             <div>
-                <div class="text-gray-600">Expired</div>
-                <div class="font-semibold ${cert.validity.expired ? 'text-red-600' : 'text-green-600'}">${cert.validity.expired ? 'Yes' : 'No'}</div>
+                <div class="text-gray-600 dark:text-gray-400">Expired</div>
+                <div class="font-semibold ${cert.validity.expired ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}">${cert.validity.expired ? 'Yes' : 'No'}</div>
             </div>
             <div>
-                <div class="text-gray-600">Days Remaining</div>
-                <div class="font-semibold ${cert.validity.days_remaining < 30 ? 'text-yellow-600' : 'text-gray-800'}">${cert.validity.days_remaining}</div>
+                <div class="text-gray-600 dark:text-gray-400">Days Remaining</div>
+                <div class="font-semibold ${cert.validity.days_remaining < 30 ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-800 dark:text-gray-200'}">${cert.validity.days_remaining}</div>
             </div>
         </div>
     `;
@@ -359,13 +375,13 @@ function renderSslData(data) {
     // Subject info
     if (cert.subject && Object.keys(cert.subject).length > 0) {
         const subjectDiv = document.createElement('div');
-        subjectDiv.innerHTML = '<h4 class="font-semibold text-gray-800 mb-2">Subject</h4>';
+        subjectDiv.innerHTML = '<h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">Subject</h4>';
         const subjectTable = document.createElement('div');
-        subjectTable.className = 'bg-gray-50 rounded p-4 space-y-1 text-sm';
+        subjectTable.className = 'bg-gray-50 dark:bg-gray-900 rounded p-4 space-y-1 text-sm';
 
         for (const [key, value] of Object.entries(cert.subject)) {
             const row = document.createElement('div');
-            row.innerHTML = `<span class="text-gray-600">${escapeHtml(key)}:</span> <span class="text-gray-800 font-mono">${escapeHtml(value)}</span>`;
+            row.innerHTML = `<span class="text-gray-600 dark:text-gray-400">${escapeHtml(key)}:</span> <span class="text-gray-800 dark:text-gray-200 font-mono">${escapeHtml(value)}</span>`;
             subjectTable.appendChild(row);
         }
 
@@ -376,13 +392,13 @@ function renderSslData(data) {
     // Issuer info
     if (cert.issuer && Object.keys(cert.issuer).length > 0) {
         const issuerDiv = document.createElement('div');
-        issuerDiv.innerHTML = '<h4 class="font-semibold text-gray-800 mb-2">Issuer</h4>';
+        issuerDiv.innerHTML = '<h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">Issuer</h4>';
         const issuerTable = document.createElement('div');
-        issuerTable.className = 'bg-gray-50 rounded p-4 space-y-1 text-sm';
+        issuerTable.className = 'bg-gray-50 dark:bg-gray-900 rounded p-4 space-y-1 text-sm';
 
         for (const [key, value] of Object.entries(cert.issuer)) {
             const row = document.createElement('div');
-            row.innerHTML = `<span class="text-gray-600">${escapeHtml(key)}:</span> <span class="text-gray-800 font-mono">${escapeHtml(value)}</span>`;
+            row.innerHTML = `<span class="text-gray-600 dark:text-gray-400">${escapeHtml(key)}:</span> <span class="text-gray-800 dark:text-gray-200 font-mono">${escapeHtml(value)}</span>`;
             issuerTable.appendChild(row);
         }
 
@@ -393,10 +409,10 @@ function renderSslData(data) {
     // Validity dates
     const datesDiv = document.createElement('div');
     datesDiv.innerHTML = `
-        <h4 class="font-semibold text-gray-800 mb-2">Validity Period</h4>
-        <div class="bg-gray-50 rounded p-4 space-y-1 text-sm">
-            <div><span class="text-gray-600">Not Before:</span> <span class="text-gray-800 font-mono">${new Date(cert.validity.not_before).toLocaleString()}</span></div>
-            <div><span class="text-gray-600">Not After:</span> <span class="text-gray-800 font-mono">${new Date(cert.validity.not_after).toLocaleString()}</span></div>
+        <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">Validity Period</h4>
+        <div class="bg-gray-50 dark:bg-gray-900 rounded p-4 space-y-1 text-sm">
+            <div><span class="text-gray-600 dark:text-gray-400">Not Before:</span> <span class="text-gray-800 dark:text-gray-200 font-mono">${new Date(cert.validity.not_before).toLocaleString()}</span></div>
+            <div><span class="text-gray-600 dark:text-gray-400">Not After:</span> <span class="text-gray-800 dark:text-gray-200 font-mono">${new Date(cert.validity.not_after).toLocaleString()}</span></div>
         </div>
     `;
     container.appendChild(datesDiv);
@@ -405,11 +421,11 @@ function renderSslData(data) {
     if (cert.subject_alt_names && cert.subject_alt_names.length > 0) {
         const sanDiv = document.createElement('div');
         sanDiv.innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Subject Alternative Names</h4>
-            <div class="bg-gray-50 rounded p-4">
+            <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">Subject Alternative Names</h4>
+            <div class="bg-gray-50 dark:bg-gray-900 rounded p-4">
                 <div class="flex flex-wrap gap-2">
                     ${cert.subject_alt_names.map(san =>
-                        `<span class="bg-white px-3 py-1 rounded border border-gray-200 text-sm font-mono">${escapeHtml(san)}</span>`
+                        `<span class="bg-white dark:bg-gray-800 px-3 py-1 rounded border border-gray-200 dark:border-gray-700 text-sm font-mono text-gray-800 dark:text-gray-200">${escapeHtml(san)}</span>`
                     ).join('')}
                 </div>
             </div>
@@ -420,34 +436,34 @@ function renderSslData(data) {
     // Key and signature info
     const techDiv = document.createElement('div');
     techDiv.innerHTML = `
-        <h4 class="font-semibold text-gray-800 mb-2">Technical Details</h4>
-        <div class="bg-gray-50 rounded p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">Technical Details</h4>
+        <div class="bg-gray-50 dark:bg-gray-900 rounded p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             ${cert.key ? `
             <div>
-                <div class="text-gray-600">Key Algorithm</div>
-                <div class="font-mono text-gray-800">${escapeHtml(cert.key.algorithm || 'N/A')}</div>
+                <div class="text-gray-600 dark:text-gray-400">Key Algorithm</div>
+                <div class="font-mono text-gray-800 dark:text-gray-200">${escapeHtml(cert.key.algorithm || 'N/A')}</div>
             </div>
             <div>
-                <div class="text-gray-600">Key Size</div>
-                <div class="font-mono text-gray-800">${cert.key.size || 'N/A'} bits</div>
+                <div class="text-gray-600 dark:text-gray-400">Key Size</div>
+                <div class="font-mono text-gray-800 dark:text-gray-200">${cert.key.size || 'N/A'} bits</div>
             </div>
             ` : ''}
             ${cert.signature_algorithm ? `
             <div>
-                <div class="text-gray-600">Signature Algorithm</div>
-                <div class="font-mono text-gray-800">${escapeHtml(cert.signature_algorithm)}</div>
+                <div class="text-gray-600 dark:text-gray-400">Signature Algorithm</div>
+                <div class="font-mono text-gray-800 dark:text-gray-200">${escapeHtml(cert.signature_algorithm)}</div>
             </div>
             ` : ''}
             ${cert.serial_number ? `
             <div>
-                <div class="text-gray-600">Serial Number</div>
-                <div class="font-mono text-gray-800 text-xs break-all">${escapeHtml(cert.serial_number)}</div>
+                <div class="text-gray-600 dark:text-gray-400">Serial Number</div>
+                <div class="font-mono text-gray-800 dark:text-gray-200 text-xs break-all">${escapeHtml(cert.serial_number)}</div>
             </div>
             ` : ''}
             ${cert.self_signed !== undefined ? `
             <div>
-                <div class="text-gray-600">Self-Signed</div>
-                <div class="font-mono ${cert.self_signed ? 'text-yellow-600' : 'text-gray-800'}">${cert.self_signed ? 'Yes' : 'No'}</div>
+                <div class="text-gray-600 dark:text-gray-400">Self-Signed</div>
+                <div class="font-mono ${cert.self_signed ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-800 dark:text-gray-200'}">${cert.self_signed ? 'Yes' : 'No'}</div>
             </div>
             ` : ''}
         </div>
@@ -645,14 +661,14 @@ function displayRecentQueries() {
 
     for (const entry of recent) {
         const item = document.createElement('button');
-        item.className = 'block w-full text-left px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-md text-sm transition-colors';
+        item.className = 'block w-full text-left px-4 py-2 bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md text-sm transition-colors';
 
         const toolBadge = document.createElement('span');
-        toolBadge.className = 'inline-block px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium mr-2';
+        toolBadge.className = 'inline-block px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded text-xs font-medium mr-2';
         toolBadge.textContent = entry.tool.toUpperCase();
 
         const queryText = document.createElement('span');
-        queryText.className = 'text-gray-700';
+        queryText.className = 'text-gray-700 dark:text-gray-300';
         queryText.textContent = entry.query;
 
         item.appendChild(toolBadge);
@@ -796,6 +812,9 @@ copyRawBtn.addEventListener('click', () => {
 
 // Event listeners - History
 clearHistoryBtn.addEventListener('click', clearRecentQueries);
+
+// Event listener - Dark mode toggle
+darkModeToggle.addEventListener('click', toggleDarkMode);
 
 // Initialize
 displayRecentQueries();

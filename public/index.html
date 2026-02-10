@@ -5,30 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Network Diagnostic Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Dark mode initialization (must run before render to prevent flash)
+        if (localStorage.getItem('darkMode') === 'true' || (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <header class="mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">Network Diagnostic Tools</h1>
-            <p class="text-gray-600">Whois, DNS, Ping, Port Check, and SSL Certificate tools</p>
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">Network Diagnostic Tools</h1>
+                    <p class="text-gray-600 dark:text-gray-400">Whois, DNS, Ping, Port Check, and SSL Certificate tools</p>
+                </div>
+                <button id="dark-mode-toggle" class="p-3 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" aria-label="Toggle dark mode">
+                    <svg id="icon-sun" class="hidden dark:block w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+                    </svg>
+                    <svg id="icon-moon" class="block dark:hidden w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                    </svg>
+                </button>
+            </div>
         </header>
 
         <!-- Tool Selector Tabs -->
-        <div class="bg-white rounded-lg shadow-md mb-6">
-            <nav class="flex border-b border-gray-200 overflow-x-auto">
-                <button id="tool-whois" class="tool-tab px-6 py-3 border-b-2 border-blue-600 text-blue-600 font-medium whitespace-nowrap">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6 transition-colors duration-200">
+            <nav class="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+                <button id="tool-whois" class="tool-tab px-6 py-3 border-b-2 border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400 font-medium whitespace-nowrap">
                     Whois
                 </button>
-                <button id="tool-dns" class="tool-tab px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium whitespace-nowrap">
+                <button id="tool-dns" class="tool-tab px-6 py-3 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 font-medium whitespace-nowrap">
                     DNS Lookup
                 </button>
-                <button id="tool-ping" class="tool-tab px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium whitespace-nowrap">
+                <button id="tool-ping" class="tool-tab px-6 py-3 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 font-medium whitespace-nowrap">
                     Ping
                 </button>
-                <button id="tool-port" class="tool-tab px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium whitespace-nowrap">
+                <button id="tool-port" class="tool-tab px-6 py-3 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 font-medium whitespace-nowrap">
                     Port Check
                 </button>
-                <button id="tool-ssl" class="tool-tab px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium whitespace-nowrap">
+                <button id="tool-ssl" class="tool-tab px-6 py-3 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 font-medium whitespace-nowrap">
                     SSL Certificate
                 </button>
             </nav>
@@ -38,22 +56,22 @@
                 <!-- Whois Form -->
                 <form id="form-whois" class="tool-form space-y-4">
                     <div>
-                        <label for="whois-target" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="whois-target" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             IP Address, Domain, or ASN
                         </label>
                         <input
                             type="text"
                             id="whois-target"
                             placeholder="e.g., 8.8.8.8, google.com, AS15169"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                             required
                         >
                     </div>
                     <div class="flex gap-3">
-                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                        <button type="submit" class="bg-blue-600 dark:bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-medium">
                             Lookup
                         </button>
-                        <button type="button" class="clear-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium">
+                        <button type="button" class="clear-btn bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
                             Clear
                         </button>
                     </div>
@@ -62,24 +80,24 @@
                 <!-- DNS Form -->
                 <form id="form-dns" class="tool-form space-y-4 hidden">
                     <div>
-                        <label for="dns-hostname" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="dns-hostname" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Hostname or Domain
                         </label>
                         <input
                             type="text"
                             id="dns-hostname"
                             placeholder="e.g., google.com, example.org"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                             required
                         >
                     </div>
                     <div>
-                        <label for="dns-type" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="dns-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Record Type
                         </label>
                         <select
                             id="dns-type"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         >
                             <option value="A">A (IPv4 Address)</option>
                             <option value="AAAA">AAAA (IPv6 Address)</option>
@@ -92,10 +110,10 @@
                         </select>
                     </div>
                     <div class="flex gap-3">
-                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                        <button type="submit" class="bg-blue-600 dark:bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-medium">
                             Query
                         </button>
-                        <button type="button" class="clear-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium">
+                        <button type="button" class="clear-btn bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
                             Clear
                         </button>
                     </div>
@@ -104,19 +122,19 @@
                 <!-- Ping Form -->
                 <form id="form-ping" class="tool-form space-y-4 hidden">
                     <div>
-                        <label for="ping-target" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="ping-target" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Target (IP or Hostname)
                         </label>
                         <input
                             type="text"
                             id="ping-target"
                             placeholder="e.g., 8.8.8.8, google.com"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                             required
                         >
                     </div>
                     <div>
-                        <label for="ping-count" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="ping-count" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Packet Count (1-10)
                         </label>
                         <input
@@ -125,15 +143,15 @@
                             value="4"
                             min="1"
                             max="10"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                             required
                         >
                     </div>
                     <div class="flex gap-3">
-                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                        <button type="submit" class="bg-blue-600 dark:bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-medium">
                             Ping
                         </button>
-                        <button type="button" class="clear-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium">
+                        <button type="button" class="clear-btn bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
                             Clear
                         </button>
                     </div>
@@ -142,19 +160,19 @@
                 <!-- Port Check Form -->
                 <form id="form-port" class="tool-form space-y-4 hidden">
                     <div>
-                        <label for="port-host" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="port-host" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Host (IP or Hostname)
                         </label>
                         <input
                             type="text"
                             id="port-host"
                             placeholder="e.g., google.com, 8.8.8.8"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                             required
                         >
                     </div>
                     <div>
-                        <label for="port-number" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="port-number" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Port Number (1-65535)
                         </label>
                         <input
@@ -163,15 +181,15 @@
                             placeholder="e.g., 443, 80, 22"
                             min="1"
                             max="65535"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                             required
                         >
                     </div>
                     <div class="flex gap-3">
-                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                        <button type="submit" class="bg-blue-600 dark:bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-medium">
                             Check Port
                         </button>
-                        <button type="button" class="clear-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium">
+                        <button type="button" class="clear-btn bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
                             Clear
                         </button>
                     </div>
@@ -180,19 +198,19 @@
                 <!-- SSL Certificate Form -->
                 <form id="form-ssl" class="tool-form space-y-4 hidden">
                     <div>
-                        <label for="ssl-hostname" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="ssl-hostname" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Hostname
                         </label>
                         <input
                             type="text"
                             id="ssl-hostname"
                             placeholder="e.g., google.com, example.org"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                             required
                         >
                     </div>
                     <div>
-                        <label for="ssl-port" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="ssl-port" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Port (default: 443)
                         </label>
                         <input
@@ -201,14 +219,14 @@
                             value="443"
                             min="1"
                             max="65535"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         >
                     </div>
                     <div class="flex gap-3">
-                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                        <button type="submit" class="bg-blue-600 dark:bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-medium">
                             Get Certificate
                         </button>
-                        <button type="button" class="clear-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium">
+                        <button type="button" class="clear-btn bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
                             Clear
                         </button>
                     </div>
@@ -217,56 +235,56 @@
         </div>
 
         <!-- Loading Indicator -->
-        <div id="loading" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div id="loading" class="hidden bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6 transition-colors duration-200">
             <div class="flex items-center">
-                <svg class="animate-spin h-5 w-5 text-blue-600 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg class="animate-spin h-5 w-5 text-blue-600 dark:text-blue-400 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span id="loading-text" class="text-blue-800 font-medium">Processing request...</span>
+                <span id="loading-text" class="text-blue-800 dark:text-blue-300 font-medium">Processing request...</span>
             </div>
         </div>
 
         <!-- Error Display -->
-        <div id="error" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div id="error" class="hidden bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6 transition-colors duration-200">
             <div class="flex">
-                <svg class="h-5 w-5 text-red-600 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="h-5 w-5 text-red-600 dark:text-red-400 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
                 </svg>
                 <div>
-                    <h3 class="text-red-800 font-medium">Error</h3>
-                    <p id="error-message" class="text-red-700 text-sm mt-1"></p>
+                    <h3 class="text-red-800 dark:text-red-300 font-medium">Error</h3>
+                    <p id="error-message" class="text-red-700 dark:text-red-400 text-sm mt-1"></p>
                 </div>
             </div>
         </div>
 
         <!-- Warnings Display -->
-        <div id="warnings" class="hidden bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+        <div id="warnings" class="hidden bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-6 transition-colors duration-200">
             <div class="flex">
-                <svg class="h-5 w-5 text-yellow-600 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="h-5 w-5 text-yellow-600 dark:text-yellow-400 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                 </svg>
                 <div>
-                    <h3 class="text-yellow-800 font-medium">Warnings</h3>
-                    <ul id="warning-list" class="text-yellow-700 text-sm mt-1 list-disc list-inside"></ul>
+                    <h3 class="text-yellow-800 dark:text-yellow-300 font-medium">Warnings</h3>
+                    <ul id="warning-list" class="text-yellow-700 dark:text-yellow-400 text-sm mt-1 list-disc list-inside"></ul>
                 </div>
             </div>
         </div>
 
         <!-- Results Display -->
         <div id="results" class="hidden">
-            <div class="bg-white rounded-lg shadow-md mb-6">
-                <div class="border-b border-gray-200">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6 transition-colors duration-200">
+                <div class="border-b border-gray-200 dark:border-gray-700">
                     <nav class="flex -mb-px">
                         <button
                             id="tab-parsed"
-                            class="result-tab px-6 py-3 border-b-2 border-blue-600 text-blue-600 font-medium"
+                            class="result-tab px-6 py-3 border-b-2 border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400 font-medium"
                         >
                             Parsed Data
                         </button>
                         <button
                             id="tab-raw"
-                            class="result-tab px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium"
+                            class="result-tab px-6 py-3 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 font-medium"
                         >
                             Raw Output
                         </button>
@@ -275,23 +293,23 @@
 
                 <div class="p-6">
                     <!-- Metadata -->
-                    <div id="metadata" class="mb-4 pb-4 border-b border-gray-200">
+                    <div id="metadata" class="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
                         <div class="flex flex-wrap gap-4 text-sm">
                             <div>
-                                <span class="text-gray-600">Tool:</span>
-                                <span id="result-tool" class="font-medium text-gray-800 ml-1"></span>
+                                <span class="text-gray-600 dark:text-gray-400">Tool:</span>
+                                <span id="result-tool" class="font-medium text-gray-800 dark:text-gray-200 ml-1"></span>
                             </div>
                             <div id="metadata-target">
-                                <span class="text-gray-600">Target:</span>
-                                <span id="result-target" class="font-medium text-gray-800 ml-1"></span>
+                                <span class="text-gray-600 dark:text-gray-400">Target:</span>
+                                <span id="result-target" class="font-medium text-gray-800 dark:text-gray-200 ml-1"></span>
                             </div>
                             <div>
-                                <span class="text-gray-600">Cached:</span>
-                                <span id="result-cached" class="font-medium text-gray-800 ml-1"></span>
+                                <span class="text-gray-600 dark:text-gray-400">Cached:</span>
+                                <span id="result-cached" class="font-medium text-gray-800 dark:text-gray-200 ml-1"></span>
                             </div>
                             <div>
-                                <span class="text-gray-600">Timestamp:</span>
-                                <span id="result-timestamp" class="font-medium text-gray-800 ml-1"></span>
+                                <span class="text-gray-600 dark:text-gray-400">Timestamp:</span>
+                                <span id="result-timestamp" class="font-medium text-gray-800 dark:text-gray-200 ml-1"></span>
                             </div>
                         </div>
                     </div>
@@ -299,10 +317,10 @@
                     <!-- Parsed Data Tab -->
                     <div id="content-parsed" class="result-content">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Parsed Information</h3>
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Parsed Information</h3>
                             <button
                                 id="copy-parsed-btn"
-                                class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium"
+                                class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
                             >
                                 Copy JSON
                             </button>
@@ -313,36 +331,36 @@
                     <!-- Raw Output Tab -->
                     <div id="content-raw" class="result-content hidden">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Raw Output</h3>
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Raw Output</h3>
                             <button
                                 id="copy-raw-btn"
-                                class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium"
+                                class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
                             >
                                 Copy Raw
                             </button>
                         </div>
-                        <pre id="raw-data" class="bg-gray-50 p-4 rounded-md overflow-x-auto text-sm text-gray-800 whitespace-pre-wrap"></pre>
+                        <pre id="raw-data" class="bg-gray-50 dark:bg-gray-900 p-4 rounded-md overflow-x-auto text-sm text-gray-800 dark:text-gray-300 whitespace-pre-wrap"></pre>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Recent Queries -->
-        <div id="recent-queries" class="bg-white rounded-lg shadow-md p-6">
+        <div id="recent-queries" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-200">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-gray-800">Recent Queries</h2>
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Recent Queries</h2>
                 <button
                     id="clear-history-btn"
-                    class="text-red-600 hover:text-red-700 text-sm font-medium"
+                    class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm font-medium"
                 >
                     Clear History
                 </button>
             </div>
             <div id="recent-list" class="space-y-2"></div>
-            <p id="no-recent" class="text-gray-500 text-sm">No recent queries</p>
+            <p id="no-recent" class="text-gray-500 dark:text-gray-400 text-sm">No recent queries</p>
         </div>
 
-        <footer class="mt-8 text-center text-gray-600 text-sm">
+        <footer class="mt-8 text-center text-gray-600 dark:text-gray-400 text-sm">
             <p>Network Diagnostic Tools &copy; 2026</p>
         </footer>
     </div>
