@@ -1,33 +1,42 @@
 const rateLimit = require('express-rate-limit');
 const logger = require('../utils/logger');
 
-const rateLimitWindow = parseInt(process.env.RATE_LIMIT_WINDOW || '60000', 10);
-const rateLimitMax = parseInt(process.env.RATE_LIMIT_MAX || '60', 10);
+const trustedIPs = process.env.RATE_LIMIT_WHITELIST
+  ? process.env.RATE_LIMIT_WHITELIST.split(',').map(ip => ip.trim())
+  : [];
 
-const limiter = rateLimit({
-  windowMs: rateLimitWindow,
-  max: rateLimitMax,
-  standardHeaders: true,
-  legacyHeaders: false,
-  handler: (req, res) => {
-    logger.warn('Rate limit exceeded', {
-      ip: req.ip,
-      path: req.path
-    });
+function createLimiter(max, windowMs = 60000) {
+  return rateLimit({
+    windowMs,
+    max,
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: (req, res) => {
+      logger.warn('Rate limit exceeded', {
+        ip: req.ip,
+        path: req.path
+      });
 
-    res.status(429).json({
-      success: false,
-      error: 'Too many requests, please try again later',
-      timestamp: new Date().toISOString()
-    });
-  },
-  skip: (req) => {
-    const trustedIPs = process.env.RATE_LIMIT_WHITELIST
-      ? process.env.RATE_LIMIT_WHITELIST.split(',').map(ip => ip.trim())
-      : [];
+      res.status(429).json({
+        success: false,
+        error: 'Too many requests, please try again later',
+        timestamp: new Date().toISOString()
+      });
+    },
+    skip: (req) => trustedIPs.includes(req.ip)
+  });
+}
 
-    return trustedIPs.includes(req.ip);
-  }
-});
+const fastLimiter = createLimiter(60);
+const mediumLimiter = createLimiter(30);
+const slowLimiter = createLimiter(20);
 
-module.exports = limiter;
+module.exports = {
+  whoisLimiter: fastLimiter,
+  dnsLimiter: fastLimiter,
+  pingLimiter: mediumLimiter,
+  portLimiter: fastLimiter,
+  sslLimiter: mediumLimiter,
+
+  defaultLimiter: fastLimiter
+};

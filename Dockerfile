@@ -1,6 +1,12 @@
 FROM node:20-alpine
 
-RUN apk add --no-cache whois
+RUN apk add --no-cache \
+    whois \
+    bind-tools \
+    iputils \
+    openssl \
+    netcat-openbsd \
+    bash
 
 WORKDIR /app
 

@@ -104,11 +104,58 @@ function validateTargetMiddleware(req, res, next) {
   next();
 }
 
+function validateHostname(hostname) {
+  if (!hostname || typeof hostname !== 'string') {
+    return false;
+  }
+
+  const trimmed = hostname.trim();
+
+  if (trimmed.length === 0 || trimmed.length > 253) {
+    return false;
+  }
+
+  if (hasShellMetacharacters(trimmed)) {
+    return false;
+  }
+
+  return isValidIPv4(trimmed) || isValidIPv6(trimmed) || isValidDomain(trimmed);
+}
+
+function validateDNSRecordType(type) {
+  const validTypes = ['A', 'AAAA', 'MX', 'TXT', 'NS', 'CNAME', 'SOA', 'ANY'];
+  return validTypes.includes(type.toUpperCase());
+}
+
+function validatePort(port) {
+  const portNum = parseInt(port, 10);
+  return !isNaN(portNum) && portNum >= 1 && portNum <= 65535;
+}
+
+function validatePingCount(count) {
+  const countNum = parseInt(count, 10);
+  return !isNaN(countNum) && countNum >= 1 && countNum <= 10;
+}
+
+function sanitizeInput(input) {
+  if (!input || typeof input !== 'string') {
+    return '';
+  }
+
+  return input.replace(/[;&|`$(){}\[\]<>'"\\]/g, '');
+}
+
 module.exports = {
   validateTarget,
   validateTargetMiddleware,
   isValidIPv4,
   isValidIPv6,
   isValidDomain,
-  isValidASN
+  isValidASN,
+  validateHostname,
+  validateDNSRecordType,
+  validatePort,
+  validatePingCount,
+  sanitizeInput,
+  hasShellMetacharacters
 };

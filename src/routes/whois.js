@@ -1,19 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const { validateTargetMiddleware } = require('../middleware/validator');
-const rateLimiter = require('../middleware/rateLimiter');
+const { whoisLimiter } = require('../middleware/rateLimiter');
 const whoisClient = require('../services/whoisClient');
 const parser = require('../services/parser');
 const cache = require('../services/cache');
 const logger = require('../utils/logger');
 
-router.get('/whois/:target', rateLimiter, validateTargetMiddleware, async (req, res) => {
+router.get('/whois/:target', whoisLimiter, validateTargetMiddleware, async (req, res) => {
   const target = req.validatedTarget;
   const startTime = Date.now();
   let fromCache = false;
 
   try {
-    let cachedData = cache.get(target);
+    let cachedData = cache.get('whois', target);
 
     if (cachedData) {
       fromCache = true;
@@ -71,7 +71,7 @@ router.get('/whois/:target', rateLimiter, validateTargetMiddleware, async (req, 
       parsed: parsedData
     };
 
-    cache.set(target, dataToCache);
+    cache.set('whois', target, dataToCache);
 
     const responseTime = Date.now() - startTime;
     logger.logRequest(target, req.ip, false, responseTime);

@@ -1,6 +1,10 @@
 const express = require('express');
 const path = require('path');
 const whoisRoutes = require('./src/routes/whois');
+const dnsRoutes = require('./src/routes/dns');
+const portRoutes = require('./src/routes/port');
+const pingRoutes = require('./src/routes/ping');
+const sslRoutes = require('./src/routes/ssl');
 const logger = require('./src/utils/logger');
 
 const app = express();
@@ -20,6 +24,10 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api', whoisRoutes);
+app.use('/api', dnsRoutes);
+app.use('/api', portRoutes);
+app.use('/api', pingRoutes);
+app.use('/api', sslRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

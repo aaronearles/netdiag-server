@@ -1,39 +1,76 @@
 const NodeCache = require('node-cache');
 
-const cacheTTL = parseInt(process.env.CACHE_TTL || '3600', 10);
+const caches = {
+  whois: new NodeCache({
+    stdTTL: 3600,
+    checkperiod: 720,
+    useClones: false
+  }),
+  dns: new NodeCache({
+    stdTTL: 300,
+    checkperiod: 60,
+    useClones: false
+  }),
+  ping: new NodeCache({
+    stdTTL: 60,
+    checkperiod: 12,
+    useClones: false
+  }),
+  port: new NodeCache({
+    stdTTL: 60,
+    checkperiod: 12,
+    useClones: false
+  }),
+  ssl: new NodeCache({
+    stdTTL: 86400,
+    checkperiod: 17280,
+    useClones: false
+  })
+};
 
-const cache = new NodeCache({
-  stdTTL: cacheTTL,
-  checkperiod: cacheTTL * 0.2,
-  useClones: false
-});
-
-function normalizeTarget(target) {
-  return target.toLowerCase().trim();
+function normalizeKey(key) {
+  return key.toLowerCase().trim();
 }
 
-function get(target) {
-  const key = normalizeTarget(target);
-  return cache.get(key);
+function getCache(tool) {
+  return caches[tool] || caches.whois;
 }
 
-function set(target, data) {
-  const key = normalizeTarget(target);
-  return cache.set(key, data);
+function get(tool, key) {
+  const cache = getCache(tool);
+  const normalizedKey = normalizeKey(key);
+  return cache.get(normalizedKey);
 }
 
-function has(target) {
-  const key = normalizeTarget(target);
-  return cache.has(key);
+function set(tool, key, data) {
+  const cache = getCache(tool);
+  const normalizedKey = normalizeKey(key);
+  return cache.set(normalizedKey, data);
 }
 
-function getStats() {
-  return cache.getStats();
+function has(tool, key) {
+  const cache = getCache(tool);
+  const normalizedKey = normalizeKey(key);
+  return cache.has(normalizedKey);
+}
+
+function getStats(tool) {
+  if (tool) {
+    const cache = getCache(tool);
+    return cache.getStats();
+  }
+
+  const allStats = {};
+  for (const [toolName, cache] of Object.entries(caches)) {
+    allStats[toolName] = cache.getStats();
+  }
+  return allStats;
 }
 
 module.exports = {
   get,
   set,
   has,
-  getStats
+  getStats,
+  getCache
 };
