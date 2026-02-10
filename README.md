@@ -25,7 +25,7 @@ A lightweight, Dockerized web service providing multiple network diagnostic tool
 
 ```bash
 # Clone or download the project
-cd whois-http
+cd netdiag-server
 
 # Build and start the service
 docker compose up -d --build
@@ -71,6 +71,8 @@ npm start
 
 Query whois information for an IP address, domain name, or ASN.
 
+**Field Normalization:** The API normalizes whois fields across different Regional Internet Registries (ARIN, APNIC, RIPE, LACNIC, AFRINIC). Standardized field names like `Organization`, `IPRange`, `CIDR`, `Country` are added alongside original RIR-specific fields. See [FIELDS.md](FIELDS.md) for the complete mapping.
+
 **Examples:**
 
 ```bash
@@ -86,8 +88,8 @@ curl http://localhost:3000/api/whois/google.com
 # ASN lookup
 curl http://localhost:3000/api/whois/AS15169
 
-# Filtered fields
-curl "http://localhost:3000/api/whois/8.8.8.8?fields=NetRange,Organization,Country"
+# Filtered fields (use standardized field names for consistency)
+curl "http://localhost:3000/api/whois/8.8.8.8?fields=Organization,CIDR,Country"
 ```
 
 **Response:**
@@ -99,8 +101,10 @@ curl "http://localhost:3000/api/whois/8.8.8.8?fields=NetRange,Organization,Count
   "raw": "# ARIN WHOIS data...\n\nNetRange: 8.8.8.0 - 8.8.8.255\n...",
   "parsed": {
     "NetRange": "8.8.8.0 - 8.8.8.255",
+    "IPRange": "8.8.8.0 - 8.8.8.255",
     "CIDR": "8.8.8.0/24",
     "NetName": "LVLT-GOGL-8-8-8",
+    "NetworkName": "LVLT-GOGL-8-8-8",
     "Organization": "Google LLC (GOGL)",
     "Country": "US"
   },
@@ -108,6 +112,8 @@ curl "http://localhost:3000/api/whois/8.8.8.8?fields=NetRange,Organization,Count
   "timestamp": "2026-02-10T10:00:00.000Z"
 }
 ```
+
+Note: Response includes both original fields (e.g., `NetRange`, `NetName`) and normalized fields (e.g., `IPRange`, `NetworkName`).
 
 **Cache TTL:** 1 hour
 **Rate Limit:** 60 requests/minute
@@ -194,12 +200,12 @@ curl "http://localhost:3000/api/ping/google.com?count=10"
   "packets_sent": 4,
   "packets_received": 4,
   "packet_loss_percent": 0,
-  "duration_ms": 3042,
+  "time_ms": 3042,
   "rtt": {
-    "min_ms": 14.2,
-    "avg_ms": 15.1,
-    "max_ms": 16.8,
-    "stddev_ms": 1.2
+    "min": 14.2,
+    "avg": 15.1,
+    "max": 16.8,
+    "stddev": 1.2
   },
   "raw": "PING 8.8.8.8 (8.8.8.8): 56 data bytes\n...",
   "cached": false,
@@ -472,7 +478,7 @@ scp -r netdiag-server/ user@dockerint01:~/
 ssh user@dockerint01
 
 # Navigate to directory
-cd ~/whois-http
+cd ~/netdiag-server
 
 # Build and start
 docker compose up -d --build
@@ -660,6 +666,11 @@ This service is particularly useful for:
 - **Network documentation** and inventory systems
 - **Security auditing** and SSL certificate monitoring
 - **Teaching/learning** network protocols via HTTP API
+
+## Client Libraries
+
+- [netdiag-powershell](https://github.com/aaronearles/netdiag-powershell) - PowerShell module for Windows
+- [netdiag-python](https://github.com/aaronearles/netdiag-python) - Python client (coming soon)
 
 ## License
 
