@@ -63,6 +63,12 @@ npm run dev
 npm start
 ```
 
+## API Documentation
+
+For complete API documentation including all endpoints, parameters, error codes, and examples, see **[API.md](API.md)**.
+
+Quick reference below covers basic usage. For advanced features like batch operations and detailed specifications, consult the full API documentation.
+
 ## API Usage
 
 ### 1. Whois Lookup
