@@ -48,22 +48,6 @@ const clearHistoryBtn = document.getElementById('clear-history-btn');
 const RECENT_QUERIES_KEY = 'nettools-recent-queries';
 const MAX_RECENT = 10;
 
-// Dark mode
-const darkModeToggle = document.getElementById('dark-mode-toggle');
-
-function toggleDarkMode() {
-    const html = document.documentElement;
-    const isDark = html.classList.contains('dark');
-
-    if (isDark) {
-        html.classList.remove('dark');
-        localStorage.setItem('darkMode', 'false');
-    } else {
-        html.classList.add('dark');
-        localStorage.setItem('darkMode', 'true');
-    }
-}
-
 // Tool switching
 function switchTool(tool) {
     currentTool = tool;
@@ -812,9 +796,6 @@ copyRawBtn.addEventListener('click', () => {
 
 // Event listeners - History
 clearHistoryBtn.addEventListener('click', clearRecentQueries);
-
-// Event listener - Dark mode toggle
-darkModeToggle.addEventListener('click', toggleDarkMode);
 
 // Initialize
 displayRecentQueries();
