@@ -28,7 +28,8 @@ router.get('/whois/:target', whoisLimiter, validateTargetMiddleware, async (req,
         return res.json({
           success: true,
           target: target,
-          filtered: filtered,
+          raw: cachedData.raw,
+          parsed: filtered,
           cached: true,
           timestamp: new Date().toISOString()
         });
@@ -84,7 +85,8 @@ router.get('/whois/:target', whoisLimiter, validateTargetMiddleware, async (req,
       return res.json({
         success: true,
         target: target,
-        filtered: filtered,
+        raw: rawOutput,
+        parsed: filtered,
         cached: false,
         timestamp: new Date().toISOString()
       });
