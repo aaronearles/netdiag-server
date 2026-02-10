@@ -119,7 +119,7 @@ curl "http://localhost:3000/api/whois/8.8.8.8"
 ## Architecture Summary
 
 ```
-whois-http/
+netdiag-server/
 ├── server.js ✅ (all routes registered)
 ├── src/
 │   ├── routes/

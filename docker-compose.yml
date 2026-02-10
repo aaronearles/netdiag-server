@@ -1,7 +1,7 @@
 services:
-  whois-service:
+  netdiag-server:
     build: .
-    container_name: whois-service
+    container_name: netdiag-server
     ports:
       - "3000:3000"
     environment:

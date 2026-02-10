@@ -389,7 +389,7 @@ environment:
 ## Project Structure
 
 ```
-whois-http/
+netdiag-server/
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .dockerignore
@@ -466,7 +466,7 @@ whois-http/
 
 ```bash
 # Copy files to Docker host
-scp -r whois-http/ user@dockerint01:~/
+scp -r netdiag-server/ user@dockerint01:~/
 
 # SSH to Docker host
 ssh user@dockerint01
@@ -536,7 +536,7 @@ docker compose up -d --build
 
 ```bash
 # Enter container
-docker exec -it whois-service sh
+docker exec -it netdiag-server sh
 
 # Test each tool
 whois 8.8.8.8
@@ -567,28 +567,28 @@ ports:
 docker compose up -d --build
 
 # Verify tools are installed
-docker exec whois-service which whois
-docker exec whois-service which dig
-docker exec whois-service which ping
-docker exec whois-service which openssl
+docker exec netdiag-server which whois
+docker exec netdiag-server which dig
+docker exec netdiag-server which ping
+docker exec netdiag-server which openssl
 ```
 
 **DNS queries failing:**
 ```bash
 # Check that bind-tools package is installed
-docker exec whois-service apk info bind-tools
+docker exec netdiag-server apk info bind-tools
 
 # Test dig directly in container
-docker exec whois-service dig +short google.com
+docker exec netdiag-server dig +short google.com
 ```
 
 **SSL certificate errors:**
 ```bash
 # Verify openssl is installed
-docker exec whois-service openssl version
+docker exec netdiag-server openssl version
 
 # Test certificate retrieval directly
-docker exec whois-service sh -c "echo | openssl s_client -connect google.com:443 -servername google.com 2>/dev/null | openssl x509 -noout -text"
+docker exec netdiag-server sh -c "echo | openssl s_client -connect google.com:443 -servername google.com 2>/dev/null | openssl x509 -noout -text"
 ```
 
 ## Testing

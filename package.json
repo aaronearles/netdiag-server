@@ -1,7 +1,7 @@
 {
-  "name": "whois-service",
+  "name": "netdiag-server",
   "version": "1.0.0",
-  "description": "HTTP service for whois lookups",
+  "description": "Network diagnostic tools HTTP API server - Whois, DNS, Ping, Port Check, and SSL Certificate",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

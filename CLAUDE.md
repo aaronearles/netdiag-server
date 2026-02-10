@@ -140,7 +140,7 @@ docker compose exec whois-service sh
 
 ```bash
 # From local machine
-scp -r . aearles@dockerint01:~/whois-http/
+scp -r . aearles@dockerint01:~/netdiag-server/
 ssh aearles@dockerint01
 
 # On dockerint01
