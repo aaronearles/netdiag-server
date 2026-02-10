@@ -56,11 +56,11 @@ function switchTool(tool) {
     Object.keys(toolTabs).forEach(key => {
         const tab = toolTabs[key];
         if (key === tool) {
-            tab.classList.add('border-blue-600', 'text-blue-600');
-            tab.classList.remove('border-transparent', 'text-gray-500');
+            tab.classList.add('border-blue-600', 'dark:border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+            tab.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
         } else {
-            tab.classList.remove('border-blue-600', 'text-blue-600');
-            tab.classList.add('border-transparent', 'text-gray-500');
+            tab.classList.remove('border-blue-600', 'dark:border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+            tab.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
         }
     });
 
