@@ -3,63 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Whois Lookup Service</title>
+    <title>Network Diagnostic Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <header class="mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">Whois Lookup Service</h1>
-            <p class="text-gray-600">Query IP addresses, domains, and ASN information</p>
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Network Diagnostic Tools</h1>
+            <p class="text-gray-600">Whois, DNS, Ping, Port Check, and SSL Certificate tools</p>
         </header>
 
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <form id="whois-form" class="space-y-4">
-                <div>
-                    <label for="target" class="block text-sm font-medium text-gray-700 mb-2">
-                        IP Address, Domain, or ASN
-                    </label>
-                    <input
-                        type="text"
-                        id="target"
-                        name="target"
-                        placeholder="e.g., 8.8.8.8, google.com, AS15169"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        required
-                    >
-                </div>
+        <!-- Tool Selector Tabs -->
+        <div class="bg-white rounded-lg shadow-md mb-6">
+            <nav class="flex border-b border-gray-200 overflow-x-auto">
+                <button id="tool-whois" class="tool-tab px-6 py-3 border-b-2 border-blue-600 text-blue-600 font-medium whitespace-nowrap">
+                    Whois
+                </button>
+                <button id="tool-dns" class="tool-tab px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium whitespace-nowrap">
+                    DNS Lookup
+                </button>
+                <button id="tool-ping" class="tool-tab px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium whitespace-nowrap">
+                    Ping
+                </button>
+                <button id="tool-port" class="tool-tab px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium whitespace-nowrap">
+                    Port Check
+                </button>
+                <button id="tool-ssl" class="tool-tab px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium whitespace-nowrap">
+                    SSL Certificate
+                </button>
+            </nav>
 
-                <div class="flex gap-3">
-                    <button
-                        type="submit"
-                        class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium"
-                    >
-                        Lookup
-                    </button>
-                    <button
-                        type="button"
-                        id="clear-btn"
-                        class="bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium"
-                    >
-                        Clear
-                    </button>
-                </div>
-            </form>
+            <!-- Input Forms -->
+            <div class="p-6">
+                <!-- Whois Form -->
+                <form id="form-whois" class="tool-form space-y-4">
+                    <div>
+                        <label for="whois-target" class="block text-sm font-medium text-gray-700 mb-2">
+                            IP Address, Domain, or ASN
+                        </label>
+                        <input
+                            type="text"
+                            id="whois-target"
+                            placeholder="e.g., 8.8.8.8, google.com, AS15169"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required
+                        >
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                            Lookup
+                        </button>
+                        <button type="button" class="clear-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium">
+                            Clear
+                        </button>
+                    </div>
+                </form>
+
+                <!-- DNS Form -->
+                <form id="form-dns" class="tool-form space-y-4 hidden">
+                    <div>
+                        <label for="dns-hostname" class="block text-sm font-medium text-gray-700 mb-2">
+                            Hostname or Domain
+                        </label>
+                        <input
+                            type="text"
+                            id="dns-hostname"
+                            placeholder="e.g., google.com, example.org"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label for="dns-type" class="block text-sm font-medium text-gray-700 mb-2">
+                            Record Type
+                        </label>
+                        <select
+                            id="dns-type"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                            <option value="A">A (IPv4 Address)</option>
+                            <option value="AAAA">AAAA (IPv6 Address)</option>
+                            <option value="MX">MX (Mail Exchange)</option>
+                            <option value="TXT">TXT (Text Records)</option>
+                            <option value="NS">NS (Name Servers)</option>
+                            <option value="CNAME">CNAME (Canonical Name)</option>
+                            <option value="SOA">SOA (Start of Authority)</option>
+                            <option value="ANY">ANY (All Records)</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                            Query
+                        </button>
+                        <button type="button" class="clear-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium">
+                            Clear
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Ping Form -->
+                <form id="form-ping" class="tool-form space-y-4 hidden">
+                    <div>
+                        <label for="ping-target" class="block text-sm font-medium text-gray-700 mb-2">
+                            Target (IP or Hostname)
+                        </label>
+                        <input
+                            type="text"
+                            id="ping-target"
+                            placeholder="e.g., 8.8.8.8, google.com"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label for="ping-count" class="block text-sm font-medium text-gray-700 mb-2">
+                            Packet Count (1-10)
+                        </label>
+                        <input
+                            type="number"
+                            id="ping-count"
+                            value="4"
+                            min="1"
+                            max="10"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required
+                        >
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                            Ping
+                        </button>
+                        <button type="button" class="clear-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium">
+                            Clear
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Port Check Form -->
+                <form id="form-port" class="tool-form space-y-4 hidden">
+                    <div>
+                        <label for="port-host" class="block text-sm font-medium text-gray-700 mb-2">
+                            Host (IP or Hostname)
+                        </label>
+                        <input
+                            type="text"
+                            id="port-host"
+                            placeholder="e.g., google.com, 8.8.8.8"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label for="port-number" class="block text-sm font-medium text-gray-700 mb-2">
+                            Port Number (1-65535)
+                        </label>
+                        <input
+                            type="number"
+                            id="port-number"
+                            placeholder="e.g., 443, 80, 22"
+                            min="1"
+                            max="65535"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required
+                        >
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                            Check Port
+                        </button>
+                        <button type="button" class="clear-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium">
+                            Clear
+                        </button>
+                    </div>
+                </form>
+
+                <!-- SSL Certificate Form -->
+                <form id="form-ssl" class="tool-form space-y-4 hidden">
+                    <div>
+                        <label for="ssl-hostname" class="block text-sm font-medium text-gray-700 mb-2">
+                            Hostname
+                        </label>
+                        <input
+                            type="text"
+                            id="ssl-hostname"
+                            placeholder="e.g., google.com, example.org"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label for="ssl-port" class="block text-sm font-medium text-gray-700 mb-2">
+                            Port (default: 443)
+                        </label>
+                        <input
+                            type="number"
+                            id="ssl-port"
+                            value="443"
+                            min="1"
+                            max="65535"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                            Get Certificate
+                        </button>
+                        <button type="button" class="clear-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium">
+                            Clear
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
 
+        <!-- Loading Indicator -->
         <div id="loading" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <div class="flex items-center">
                 <svg class="animate-spin h-5 w-5 text-blue-600 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span class="text-blue-800 font-medium">Querying whois server...</span>
+                <span id="loading-text" class="text-blue-800 font-medium">Processing request...</span>
             </div>
         </div>
 
+        <!-- Error Display -->
         <div id="error" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <div class="flex">
-                <svg class="h-5 w-5 text-red-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="h-5 w-5 text-red-600 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
                 </svg>
                 <div>
@@ -69,19 +240,33 @@
             </div>
         </div>
 
+        <!-- Warnings Display -->
+        <div id="warnings" class="hidden bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <div class="flex">
+                <svg class="h-5 w-5 text-yellow-600 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <h3 class="text-yellow-800 font-medium">Warnings</h3>
+                    <ul id="warning-list" class="text-yellow-700 text-sm mt-1 list-disc list-inside"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Display -->
         <div id="results" class="hidden">
             <div class="bg-white rounded-lg shadow-md mb-6">
                 <div class="border-b border-gray-200">
                     <nav class="flex -mb-px">
                         <button
                             id="tab-parsed"
-                            class="tab-btn px-6 py-3 border-b-2 border-blue-600 text-blue-600 font-medium"
+                            class="result-tab px-6 py-3 border-b-2 border-blue-600 text-blue-600 font-medium"
                         >
                             Parsed Data
                         </button>
                         <button
                             id="tab-raw"
-                            class="tab-btn px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium"
+                            class="result-tab px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium"
                         >
                             Raw Output
                         </button>
@@ -89,9 +274,14 @@
                 </div>
 
                 <div class="p-6">
+                    <!-- Metadata -->
                     <div id="metadata" class="mb-4 pb-4 border-b border-gray-200">
                         <div class="flex flex-wrap gap-4 text-sm">
                             <div>
+                                <span class="text-gray-600">Tool:</span>
+                                <span id="result-tool" class="font-medium text-gray-800 ml-1"></span>
+                            </div>
+                            <div id="metadata-target">
                                 <span class="text-gray-600">Target:</span>
                                 <span id="result-target" class="font-medium text-gray-800 ml-1"></span>
                             </div>
@@ -106,7 +296,8 @@
                         </div>
                     </div>
 
-                    <div id="content-parsed" class="tab-content">
+                    <!-- Parsed Data Tab -->
+                    <div id="content-parsed" class="result-content">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold text-gray-800">Parsed Information</h3>
                             <button
@@ -116,14 +307,11 @@
                                 Copy JSON
                             </button>
                         </div>
-                        <div id="parsed-data" class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <tbody id="parsed-table" class="bg-white divide-y divide-gray-200"></tbody>
-                            </table>
-                        </div>
+                        <div id="parsed-data" class="overflow-x-auto"></div>
                     </div>
 
-                    <div id="content-raw" class="tab-content hidden">
+                    <!-- Raw Output Tab -->
+                    <div id="content-raw" class="result-content hidden">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold text-gray-800">Raw Output</h3>
                             <button
@@ -139,6 +327,7 @@
             </div>
         </div>
 
+        <!-- Recent Queries -->
         <div id="recent-queries" class="bg-white rounded-lg shadow-md p-6">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-semibold text-gray-800">Recent Queries</h2>
@@ -154,7 +343,7 @@
         </div>
 
         <footer class="mt-8 text-center text-gray-600 text-sm">
-            <p>Whois HTTP Service &copy; 2026</p>
+            <p>Network Diagnostic Tools &copy; 2026</p>
         </footer>
     </div>
 
