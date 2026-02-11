@@ -41,13 +41,13 @@ curl http://localhost:3000/health
 
 ```bash
 # Build the image
-docker build -t nettools-service .
+docker build -t netdiag-server .
 
 # Run the container
-docker run -d -p 3000:3000 --name nettools-service nettools-service
+docker run -d -p 3000:3000 --name netdiag-server netdiag-server
 
 # Check logs
-docker logs -f nettools-service
+docker logs -f netdiag-server
 ```
 
 ### Local Development
