@@ -665,7 +665,7 @@ function displayRecentQueries() {
             switch(entry.tool) {
                 case 'whois':
                     document.getElementById('whois-target').value = entry.query;
-                    forms.whois.dispatchEvent(new Event('submit'));
+                    forms.whois.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
                     break;
                 case 'dns':
                     const [dnsHost, dnsType] = entry.query.split(' (');
@@ -673,7 +673,7 @@ function displayRecentQueries() {
                     if (dnsType) {
                         document.getElementById('dns-type').value = dnsType.replace(')', '');
                     }
-                    forms.dns.dispatchEvent(new Event('submit'));
+                    forms.dns.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
                     break;
                 case 'ping':
                     const [pingHost, pingCount] = entry.query.split(' (');
@@ -681,19 +681,19 @@ function displayRecentQueries() {
                     if (pingCount) {
                         document.getElementById('ping-count').value = pingCount.replace(')', '');
                     }
-                    forms.ping.dispatchEvent(new Event('submit'));
+                    forms.ping.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
                     break;
                 case 'port':
                     const [portHost, portNum] = entry.query.split(':');
                     document.getElementById('port-host').value = portHost;
                     document.getElementById('port-number').value = portNum;
-                    forms.port.dispatchEvent(new Event('submit'));
+                    forms.port.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
                     break;
                 case 'ssl':
                     const [sslHost, sslPort] = entry.query.split(':');
                     document.getElementById('ssl-hostname').value = sslHost;
                     document.getElementById('ssl-port').value = sslPort || '443';
-                    forms.ssl.dispatchEvent(new Event('submit'));
+                    forms.ssl.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
                     break;
             }
         };
