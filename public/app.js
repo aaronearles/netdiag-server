@@ -82,17 +82,17 @@ function switchTool(tool) {
 // Result tab switching
 function switchResultTab(tab) {
     if (tab === 'parsed') {
-        tabParsed.classList.add('border-blue-600', 'text-blue-600');
-        tabParsed.classList.remove('border-transparent', 'text-gray-500');
-        tabRaw.classList.remove('border-blue-600', 'text-blue-600');
-        tabRaw.classList.add('border-transparent', 'text-gray-500');
+        tabParsed.classList.add('border-blue-600', 'dark:border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+        tabParsed.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+        tabRaw.classList.remove('border-blue-600', 'dark:border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+        tabRaw.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
         contentParsed.classList.remove('hidden');
         contentRaw.classList.add('hidden');
     } else {
-        tabRaw.classList.add('border-blue-600', 'text-blue-600');
-        tabRaw.classList.remove('border-transparent', 'text-gray-500');
-        tabParsed.classList.remove('border-blue-600', 'text-blue-600');
-        tabParsed.classList.add('border-transparent', 'text-gray-500');
+        tabRaw.classList.add('border-blue-600', 'dark:border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+        tabRaw.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+        tabParsed.classList.remove('border-blue-600', 'dark:border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+        tabParsed.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
         contentRaw.classList.remove('hidden');
         contentParsed.classList.add('hidden');
     }
