@@ -33,7 +33,7 @@ router.get('/dns/:hostname', dnsLimiter, async (req, res) => {
 
     return res.status(400).json({
       success: false,
-      error: 'Invalid DNS record type. Valid types: A, AAAA, MX, TXT, NS, CNAME, SOA, ANY',
+      error: 'Invalid DNS record type. Valid types: A, AAAA, MX, TXT, NS, CNAME, SOA, PTR, ANY',
       timestamp: new Date().toISOString()
     });
   }
@@ -50,8 +50,9 @@ router.get('/dns/:hostname', dnsLimiter, async (req, res) => {
       return res.json({
         success: true,
         hostname,
-        type,
+        type: cachedData.queryType || type,
         records: cachedData.records,
+        is_reverse_lookup: cachedData.isReverseLookup || false,
         query_time_ms: responseTime,
         cached: true,
         timestamp: new Date().toISOString()
@@ -78,19 +79,22 @@ router.get('/dns/:hostname', dnsLimiter, async (req, res) => {
     }
 
     const dataToCache = {
-      records: result.records
+      records: result.records,
+      queryType: result.queryType,
+      isReverseLookup: result.isReverseLookup
     };
 
     cache.set('dns', cacheKey, dataToCache);
 
     const responseTime = Date.now() - startTime;
-    logger.info('DNS request', { hostname, type, ip: req.ip, cached: false, responseTime });
+    logger.info('DNS request', { hostname, type, ip: req.ip, cached: false, responseTime, isReverseLookup: result.isReverseLookup });
 
     return res.json({
       success: true,
       hostname,
-      type,
+      type: result.queryType,
       records: result.records,
+      is_reverse_lookup: result.isReverseLookup || false,
       query_time_ms: responseTime,
       cached: false,
       timestamp: new Date().toISOString()

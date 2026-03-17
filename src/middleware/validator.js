@@ -123,7 +123,7 @@ function validateHostname(hostname) {
 }
 
 function validateDNSRecordType(type) {
-  const validTypes = ['A', 'AAAA', 'MX', 'TXT', 'NS', 'CNAME', 'SOA', 'ANY'];
+  const validTypes = ['A', 'AAAA', 'MX', 'TXT', 'NS', 'CNAME', 'SOA', 'PTR', 'ANY'];
   return validTypes.includes(type.toUpperCase());
 }
 
