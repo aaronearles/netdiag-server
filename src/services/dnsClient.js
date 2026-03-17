@@ -23,22 +23,19 @@ function ipToPTR(ip) {
 
 // Expand IPv6 address to full format
 function expandIPv6(ip) {
-  const segments = ip.split(':');
-  const fullSegments = [];
-
-  for (let i = 0; i < segments.length; i++) {
-    if (segments[i] === '') {
-      // Handle :: compression
-      const remaining = 8 - segments.filter(s => s !== '').length;
-      for (let j = 0; j <= remaining; j++) {
-        fullSegments.push('0000');
-      }
-    } else {
-      fullSegments.push(segments[i].padStart(4, '0'));
-    }
+  // Handle :: expansion
+  if (ip.includes('::')) {
+    const sides = ip.split('::');
+    const left = sides[0] ? sides[0].split(':') : [];
+    const right = sides[1] ? sides[1].split(':') : [];
+    const missing = 8 - left.length - right.length;
+    const middle = Array(missing).fill('0');
+    const all = [...left, ...middle, ...right];
+    return all.map(seg => seg.padStart(4, '0')).join(':');
   }
 
-  return fullSegments.slice(0, 8).join(':');
+  // No compression, just pad each segment
+  return ip.split(':').map(seg => seg.padStart(4, '0')).join(':');
 }
 
 async function queryDNS(hostname, type = 'A') {
@@ -48,11 +45,12 @@ async function queryDNS(hostname, type = 'A') {
   let queryHostname = hostname;
   let queryType = type.toUpperCase();
 
-  // Auto-detect reverse lookup: if hostname is an IP and type is not explicitly set, do PTR
-  if ((isValidIPv4(hostname) || isValidIPv6(hostname)) && type === 'A') {
+  // Auto-detect reverse lookup: if hostname is an IP and type is A (default) or PTR (explicit), do PTR conversion
+  const isIPAddress = isValidIPv4(hostname) || isValidIPv6(hostname);
+  if (isIPAddress && (type === 'A' || queryType === 'PTR')) {
     queryType = 'PTR';
     queryHostname = ipToPTR(hostname);
-    logger.debug(`Auto-detected IP address, performing reverse lookup: ${queryHostname}`);
+    logger.debug(`${type === 'A' ? 'Auto-detected' : 'Explicit'} IP address, performing reverse lookup: ${queryHostname}`);
   }
 
   if (!validTypes.includes(queryType)) {
