@@ -214,9 +214,10 @@ function renderDnsData(data) {
         const recordsDiv = document.createElement('div');
 
         // Add header with optional reverse lookup badge
+        const recordCount = data.records.length;
         const headerHtml = data.is_reverse_lookup
-            ? `<h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">DNS Records (${data.record_count}) <span class="ml-2 text-xs font-normal px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded">Reverse Lookup</span></h4>`
-            : `<h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">DNS Records (${data.record_count})</h4>`;
+            ? `<h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">DNS Records (${recordCount}) <span class="ml-2 text-xs font-normal px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded">Reverse Lookup</span></h4>`
+            : `<h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">DNS Records (${recordCount})</h4>`;
 
         recordsDiv.innerHTML = headerHtml;
 
