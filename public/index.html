@@ -67,15 +67,16 @@
                 <form id="form-dns" class="tool-form space-y-4 hidden">
                     <div>
                         <label for="dns-hostname" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Hostname or Domain
+                            Hostname, Domain, or IP Address
                         </label>
                         <input
                             type="text"
                             id="dns-hostname"
-                            placeholder="e.g., google.com, example.org"
+                            placeholder="e.g., google.com, 8.8.8.8"
                             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                             required
                         >
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Auto-detects IP addresses for reverse DNS lookup</p>
                     </div>
                     <div>
                         <label for="dns-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -92,6 +93,7 @@
                             <option value="NS">NS (Name Servers)</option>
                             <option value="CNAME">CNAME (Canonical Name)</option>
                             <option value="SOA">SOA (Start of Authority)</option>
+                            <option value="PTR">PTR (Reverse DNS)</option>
                             <option value="ANY">ANY (All Records)</option>
                         </select>
                     </div>
